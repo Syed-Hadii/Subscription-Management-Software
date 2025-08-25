@@ -8,6 +8,7 @@ import {
   Button,
   Chip,
   IconButton,
+  Spinner,
 } from "@material-tailwind/react";
 import {
   UsersIcon,
@@ -38,7 +39,7 @@ export function Home() {
   });
   const [recentSubscriptions, setRecentSubscriptions] = useState([]);
   const [recentInvoices, setRecentInvoices] = useState([]);
-
+const [loading, setLoading] = useState(false);
 // Define KPI configurations
   const kpiConfig = {
     "Active Subscriptions": {
@@ -66,6 +67,7 @@ export function Home() {
   // Fetch dashboard data
   useEffect(() => {
     const fetchDashboardData = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`${DASHBOARD_API}/data`);
         const { kpis, paymentHistory, recentSubscriptions, recentInvoices } = response.data;
@@ -82,6 +84,8 @@ export function Home() {
         setRecentInvoices(recentInvoices);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchDashboardData();
@@ -117,7 +121,13 @@ export function Home() {
 
   return (
     <div className="mt-12">
-      {/* KPIs */}
+      {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <Spinner className="h-10 w-10 text-blue-600" />
+              </div>
+            ) : (
+          <>
+              {/* KPIs */}
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
         {kpis.map(({ icon, title, value, color, footer }) => (
           <div key={title}>
@@ -412,6 +422,9 @@ export function Home() {
           </table>
         </CardBody>
       </Card>
+          </>
+            )}
+    
     </div>
   );
 }

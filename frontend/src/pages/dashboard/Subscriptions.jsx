@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Spinner } from "@material-tailwind/react";
 import {
   Card,
   CardBody,
@@ -313,6 +314,8 @@ export function Subscriptions() {
   const [rows, setRows] = useState([]);
   const [clients, setClients] = useState([]);
   const [open, setOpen] = useState(false);
+    const [loadingSubs, setLoadingSubs] = useState(true);    
+  const [loadingClients, setLoadingClients] = useState(false);
   const [editingId, setEditingId] = useState(null);
 const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
@@ -330,7 +333,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
   // Fetch subscriptions on mount
   const fetchClients = async () => {
     try {
-      // const token = localStorage.getItem('token');
+       setLoadingClients(true);
       const response = await axios.get(CLIENTS_API, {
         // headers: { Authorization: `Bearer ${token}` },
       });
@@ -339,6 +342,8 @@ const [isSubmitting, setIsSubmitting] = useState(false);
     } catch (err) {
       console.error('Error fetching clients:', err);
       alert('Failed to fetch clients');
+    } finally {
+      setLoadingClients(false);
     }
   };
 
@@ -349,7 +354,7 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchSubscriptions = async () => {
     try {
-      // const token = localStorage.getItem('token');
+      setLoadingSubs(true);
       const response = await axios.get(SUBSCRIPTIONS_API, {
         // headers: { Authorization: `Bearer ${token}` },
       });
@@ -358,6 +363,8 @@ const [isSubmitting, setIsSubmitting] = useState(false);
     } catch (err) {
       console.error('Error fetching subscriptions:', err);
       alert('Failed to fetch subscriptions');
+    }finally {
+      setLoadingSubs(false);
     }
   };
 
@@ -471,10 +478,16 @@ console.log(data)
           Add Subscription
         </Button>
       </div>
-
-      <div className="mb-10">
-        <PackagesCarousel items={rows} onEdit={onEdit} onDelete={onDelete} />
-      </div>
+ {loadingSubs ? (
+        <div className="flex items-center justify-center py-20">
+          <Spinner className="h-10 w-10 text-blue-600" />
+        </div>
+      ) : (
+        <div className="mb-10">
+          <PackagesCarousel items={rows} onEdit={onEdit} onDelete={onDelete} />
+        </div>
+      )}
+       
 
       <Dialog open={open} handler={handleOpen} size="lg">
         <DialogHeader className="flex w-full items-center justify-between">
@@ -525,12 +538,18 @@ console.log(data)
             />
           </div>
 
-          <div className="md:col-span-2">
-            <ClientSelect
-              value={form.clients}
-              onChange={(arr) => setForm((f) => ({ ...f, clients: arr }))}
-              clients={clients}
-            />
+           <div className="md:col-span-2">
+            {loadingClients ? (
+              <div className="flex items-center justify-center py-6">
+                <Spinner className="h-6 w-6 text-blue-600" />
+              </div>
+            ) : (
+              <ClientSelect
+                value={form.clients}
+                onChange={(arr) => setForm((f) => ({ ...f, clients: arr }))}
+                clients={clients}
+              />
+            )}
           </div>
 
           <div className="md:col-span-2">
@@ -555,7 +574,9 @@ console.log(data)
               color="blue"
               onClick={saveForm}
               disabled={isSubmitting}
+              className="flex items-center gap-2"
             >
+             {isSubmitting && <Spinner className="h-4 w-4" />}
               {isSubmitting
                 ? "Submitting..."
                 : isEditing

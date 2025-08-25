@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Spinner } from "@material-tailwind/react";
 import {
   Card,
   CardHeader,
@@ -547,7 +548,8 @@ function InvoiceCard({ invoice, onView, onEdit, onDelete }) {
 /* Main Page */
 export function Invoices() {
   const [invoices, setInvoices] = useState([]);
-  const [clients, setClients] = useState([]); // State for clients
+  const [clients, setClients] = useState([]);     
+  const [loadingInvoices, setLoadingInvoices] = useState(false);
   const [openView, setOpenView] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
@@ -583,6 +585,7 @@ export function Invoices() {
   // Fetch invoices and clients on mount
   useEffect(() => {
     const fetchInvoices = async () => {
+      setLoadingInvoices(true);
       try {
         const response = await axios.get(INVOICES_API);
         console.log('Fetched invoices:', response.data);
@@ -590,10 +593,13 @@ export function Invoices() {
       } catch (err) {
         console.error('Error fetching invoices:', err);
         alert('Failed to fetch invoices');
+      } finally {
+        setLoadingInvoices(false);
       }
     };
 
     const fetchClients = async () => {
+      
       try {
         const response = await axios.get(CLIENTS_API);
         console.log('Fetched clients:', response.data);
@@ -601,7 +607,7 @@ export function Invoices() {
       } catch (err) {
         console.error('Error fetching clients:', err);
         alert('Failed to fetch clients');
-      }
+      }  
     };
 
     fetchInvoices();
@@ -747,9 +753,12 @@ export function Invoices() {
           </div>
         </CardHeader>
       </Card>
-
-      {/* Grid of invoices */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+ {loadingInvoices ? (
+        <div className="flex items-center justify-center py-20">
+          <Spinner className="h-10 w-10 text-blue-600" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {invoices.map((inv) => (
           <InvoiceCard
             key={inv._id}
@@ -760,6 +769,9 @@ export function Invoices() {
           />
         ))}
       </div>
+      )}
+      {/* Grid of invoices */}
+     
 
       {/* View Dialog */}
       <Dialog size="xl" open={openView} handler={() => setOpenView(false)} className="max-h-[90vh] overflow-y-auto">

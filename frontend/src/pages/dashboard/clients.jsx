@@ -17,6 +17,7 @@ import {
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { API } from "@/configs/base-url";  
+import { Spinner } from "@material-tailwind/react";
 
 const CLIENTS_API = `${API}/clients`;
 
@@ -24,6 +25,7 @@ export function Clients() {
   const [clients, setClients] = useState([]);
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [loadingClients, setLoadingClients] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -42,12 +44,15 @@ export function Clients() {
   }, []);
 
   const fetchClients = async () => {
+    setLoadingClients(true);
     try {
       const res = await axios.get(CLIENTS_API);
       console.log("Fetched clients:", res.data);
       setClients(res.data);
     } catch (err) {
       console.error("Error fetching clients:", err);
+    } finally {
+      setLoadingClients(false);
     }
   };
 
@@ -151,8 +156,11 @@ export function Clients() {
           <PlusIcon className="h-5 w-5" /> Add Client
         </Button>
       </div>
-
-      {/* Client Cards */}
+ {loadingClients ? (
+        <div className="flex items-center justify-center py-20">
+          <Spinner className="h-10 w-10 text-blue-600" />
+        </div>
+      ) : (<>
       <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
         {clients.map((client) => (
           <Card
@@ -239,6 +247,10 @@ export function Clients() {
           </Card>
         ))}
       </div>
+      </>
+        
+      )}
+     
 
       {/* Add/Edit Client Dialog */}
       <Dialog open={open} handler={handleOpen} size="lg" className="bg-white">
