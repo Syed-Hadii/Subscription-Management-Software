@@ -30,8 +30,8 @@ import axios from 'axios';
 import { API } from '@/configs/base-url';  
 import jsPDF from 'jspdf';
 
-const INVOICES_API = `http://93.127.216.35:5000/invoices`;
-const CLIENTS_API = `http://93.127.216.35:5000/clients`;
+const INVOICES_API = `${API}/invoices`;
+const CLIENTS_API = `${API}/clients`;
 
 /* Helpers */
 function formatMoney(n, currency = 'USD') {

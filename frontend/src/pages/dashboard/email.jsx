@@ -21,7 +21,7 @@ import {
 import axios from 'axios';
 import { API } from '@/configs/base-url';
 
-const EMAIL_API = `http://93.127.216.35:5000/email`;
+const EMAIL_API = `${API}/email`;
 
 export function Email() {
   const [reminderTemplates, setReminderTemplates] = useState({
@@ -55,7 +55,7 @@ export function Email() {
 
     const fetchClients = async () => {
       try {
-        const response = await axios.get(`http://93.127.216.35:5000/clients`);
+        const response = await axios.get(`${API}/clients`);
         setClients(response.data);
       } catch (err) {
         console.error('Error fetching clients:', err);

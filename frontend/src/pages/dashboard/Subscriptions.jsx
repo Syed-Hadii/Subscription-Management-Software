@@ -27,8 +27,8 @@ import {
 import axios from "axios";
 import { API } from "@/configs/base-url"; // e.g., http://localhost:5000/api
 
-const SUBSCRIPTIONS_API = `http://93.127.216.35:5000/subscriptions`;
-const CLIENTS_API = `http://93.127.216.35:5000/clients`;
+const SUBSCRIPTIONS_API = `${API}/subscriptions`;
+const CLIENTS_API = `${API}/clients`;
 
 /* ----------------------------- Card (portrait) ----------------------------- */
 // In Subscription.jsx

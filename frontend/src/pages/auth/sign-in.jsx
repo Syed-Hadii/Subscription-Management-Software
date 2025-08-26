@@ -45,7 +45,7 @@ export function SignIn() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(`http://93.127.216.35:5000/auth/forgot-password`, {
+      const response = await axios.post(`${API}/auth/forgot-password`, {
         email: form.resetEmail,
       });
       setMessage({ text: response.data.msg, type: 'success' });
@@ -64,7 +64,7 @@ export function SignIn() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(`http://93.127.216.35:5000/auth/reset-password`, {
+      const response = await axios.post(`${API}/auth/reset-password`, {
         email: form.resetEmail,
         code: form.resetCode,
         newPassword: form.newPassword,

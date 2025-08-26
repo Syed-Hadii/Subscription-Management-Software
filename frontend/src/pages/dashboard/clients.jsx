@@ -16,10 +16,10 @@ import {
 } from "@material-tailwind/react";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { Spinner } from "@material-tailwind/react";
 import { API } from "@/configs/base-url";  
+import { Spinner } from "@material-tailwind/react";
 
-const CLIENTS_API = `http://93.127.216.35:5000/clients`;
+const CLIENTS_API = `${API}/clients`;
 
 export function Clients() {
   const [clients, setClients] = useState([]);
@@ -128,7 +128,7 @@ export function Clients() {
       image: null, // Fresh image upload only if user selects a new one
     });
     // Set preview to client image if available, otherwise fallback to UI Avatars
-    setPreview(client.image ? `http://93.127.216.35:5000${client.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name || "Unknown")}&background=random`);
+    setPreview(client.image ? `${API}${client.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name || "Unknown")}&background=random`);
     setEditId(client._id);
     setOpen(true);
   };
@@ -175,7 +175,7 @@ export function Clients() {
                     <img
                       src={
                         client.image
-                          ? `http://93.127.216.35:5000${client.image}`
+                          ? `${API}${client.image}`
                           : `https://ui-avatars.com/api/?name=${encodeURIComponent(
                               client.name
                             )}&background=random`
@@ -183,7 +183,7 @@ export function Clients() {
                       alt={client.name}
                       className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
                       onError={(e) => {
-                        console.error(`Failed to load image: http://93.127.216.35:5000${client.image}`);
+                        console.error(`Failed to load image: ${API}${client.image}`);
                         e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name || "Unknown")}&background=random`;
                       }}
                     />
