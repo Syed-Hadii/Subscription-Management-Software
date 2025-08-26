@@ -16,8 +16,8 @@ import {
 } from "@material-tailwind/react";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { API } from "@/configs/base-url";  
 import { Spinner } from "@material-tailwind/react";
+import { API } from "@/configs/base-url";  
 
 const CLIENTS_API = `${API}/clients`;
 
