@@ -27,7 +27,7 @@ import { StatisticsChart } from "@/widgets/charts";
 import { chartsConfig } from "@/configs";
 import { API } from '@/configs/base-url';
 
-const DASHBOARD_API = `${API}/dashboard`;
+const DASHBOARD_API = `http://93.127.216.35:5000/dashboard`;
 
 export function Home() {
   const [range, setRange] = useState("MONTH");

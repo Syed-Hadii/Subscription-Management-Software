@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       // Verify token with backend
-      await axios.get(`${API}/auth/verify`);
+      await axios.get(`http://93.127.216.35:5000/auth/verify`);
       setIsAuthenticated(true);
     } catch (error) {
       localStorage.removeItem('token');
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${API}/auth/login`, { email, password });
+      const response = await axios.post(`http://93.127.216.35:5000/auth/login`, { email, password });
       const token = response.data.token;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
