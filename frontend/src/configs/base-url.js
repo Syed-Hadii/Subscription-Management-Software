@@ -1,4 +1,4 @@
 export const API =
-    process.env.REACT_APP_API_URL;
-// "http://93.127.216.35:5000";
+    // process.env.REACT_APP_API_URL;
+    "http://93.127.216.35:5000";
 // "http://localhost:5000";
