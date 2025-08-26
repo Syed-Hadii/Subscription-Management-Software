@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { Link, NavLink } from "react-router-dom";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import {
   Avatar,
   Button,
@@ -8,10 +8,12 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
+import { useAuth } from "@/context/AuthContext";
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
+  const { logout } = useAuth(); // Get logout function from AuthContext
   const sidenavTypes = {
     dark: "bg-gradient-to-br from-gray-800 to-gray-900",
     white: "bg-white shadow-sm",
@@ -22,11 +24,9 @@ export function Sidenav({ brandImg, brandName, routes }) {
     <aside
       className={`${sidenavTypes[sidenavType]} ${
         openSidenav ? "translate-x-0" : "-translate-x-80"
-      } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100`}
+      } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100 flex flex-col`} // Added flex flex-col
     >
-      <div
-        className={`relative`}
-      >
+      <div className="relative">
         <Link to="/" className="py-6 px-8 text-center">
           <Typography
             variant="h6"
@@ -35,21 +35,18 @@ export function Sidenav({ brandImg, brandName, routes }) {
             {brandName}
           </Typography>
         </Link>
-       <IconButton
-  variant="text"
-  color={sidenavType === "dark" ? "white" : "blue-gray"} // ✅ dynamic color
-  size="sm"
-  ripple={false}
-  className="absolute right-0 top-0 m-2 grid xl:hidden" // ✅ small margin & mobile only
-  onClick={() => setOpenSidenav(dispatch, false)}
->
-  <XMarkIcon
-    strokeWidth={2.5}
-    className="h-6 w-6"
-  />
-</IconButton>
+        <IconButton
+          variant="text"
+          color={sidenavType === "dark" ? "white" : "blue-gray"}
+          size="sm"
+          ripple={false}
+          className="absolute right-0 top-0 m-2 grid xl:hidden"
+          onClick={() => setOpenSidenav(dispatch, false)}
+        >
+          <XMarkIcon strokeWidth={2.5} className="h-6 w-6" />
+        </IconButton>
       </div>
-      <div className="m-4">
+      <div className="m-4 flex-1"> {/* Added flex-1 to push logout button to bottom */}
         {routes.map(({ layout, title, pages }, key) => (
           <ul key={key} className="mb-4 flex flex-col gap-1">
             {title && (
@@ -66,35 +63,50 @@ export function Sidenav({ brandImg, brandName, routes }) {
             {pages
               .filter(({ path }) => path !== "/sign-in")
               .map(({ icon, name, path }) => (
-              <li key={name}>
-                <NavLink to={`/${layout}${path}`}>
-                  {({ isActive }) => (
-                    <Button
-                      variant={isActive ? "gradient" : "text"}
-                      color={
-                        isActive
-                          ? sidenavColor
-                          : sidenavType === "dark"
-                          ? "white"
-                          : "blue-gray"
-                      }
-                      className="flex items-center gap-4 px-4 capitalize"
-                      fullWidth
-                    >
-                      {icon}
-                      <Typography
-                        color="inherit"
-                        className="font-medium capitalize"
+                <li key={name}>
+                  <NavLink to={`/${layout}${path}`}>
+                    {({ isActive }) => (
+                      <Button
+                        variant={isActive ? "gradient" : "text"}
+                        color={
+                          isActive
+                            ? sidenavColor
+                            : sidenavType === "dark"
+                            ? "white"
+                            : "blue-gray"
+                        }
+                        className="flex items-center gap-4 px-4 capitalize"
+                        fullWidth
                       >
-                        {name}
-                      </Typography>
-                    </Button>
-                  )}
-                </NavLink>
-              </li>
-            ))}
+                        {icon}
+                        <Typography
+                          color="inherit"
+                          className="font-medium capitalize"
+                        >
+                          {name}
+                        </Typography>
+                      </Button>
+                    )}
+                  </NavLink>
+                </li>
+              ))}
           </ul>
         ))}
+      </div>
+      {/* Logout Button */}
+      <div className="m-4">
+        <Button
+          variant="text"
+          color={sidenavType === "dark" ? "white" : "blue-gray"}
+          className="flex items-center gap-4 px-4 capitalize transition-transform duration-200 hover:scale-105 hover:bg-gray-100/50 dark:hover:bg-gray-700/50" // Added animation
+          fullWidth
+          onClick={logout}
+        >
+          <ArrowRightOnRectangleIcon className="h-5 w-5" />
+          <Typography color="inherit" className="font-medium capitalize">
+            Logout
+          </Typography>
+        </Button>
       </div>
     </aside>
   );
@@ -113,4 +125,4 @@ Sidenav.propTypes = {
 
 Sidenav.displayName = "/src/widgets/layout/sidnave.jsx";
 
-export default Sidenav;
+// export default Sidenav;

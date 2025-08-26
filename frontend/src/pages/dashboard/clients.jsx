@@ -57,7 +57,7 @@ export function Clients() {
   };
 
   const handleOpen = () => {
-    setPreview("");
+    setPreview(""); // Clear preview when opening dialog
     setFormData({
       name: "",
       phone: "",
@@ -118,16 +118,17 @@ export function Clients() {
 
   const handleEdit = (client) => {
     setFormData({
-      name: client.name,
-      phone: client.phone,
-      email: client.email,
-      address: client.address,
-      company: client.company,
-      notes: client.notes,
+      name: client.name || "",
+      phone: client.phone || "",
+      email: client.email || "",
+      address: client.address || "",
+      company: client.company || "",
+      notes: client.notes || "",
       tags: client.tags?.join(", ") || "",
-      image: null, // fresh image sirf tab upload hogi jab user nayi select kare
+      image: null, // Fresh image upload only if user selects a new one
     });
-    setPreview(client.image ? `${API}/${client.image}` : "");
+    // Set preview to client image if available, otherwise fallback to UI Avatars
+    setPreview(client.image ? `${API}${client.image}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name || "Unknown")}&background=random`);
     setEditId(client._id);
     setOpen(true);
   };
@@ -156,101 +157,104 @@ export function Clients() {
           <PlusIcon className="h-5 w-5" /> Add Client
         </Button>
       </div>
- {loadingClients ? (
+      {loadingClients ? (
         <div className="flex items-center justify-center py-20">
           <Spinner className="h-10 w-10 text-blue-600" />
         </div>
-      ) : (<>
-      <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-        {clients.map((client) => (
-          <Card
-            key={client._id}
-            className="rounded-xl overflow-hidden shadow-lg transform hover:scale-[1.02] transition-all duration-300"
-          >
-            {/* Gradient Header */}
-            <div className="relative h-28 bg-gradient-to-r from-blue-gray-800 via-blue-gray-900 to-black">
-              <div className="absolute left-1/2 -bottom-12 transform -translate-x-1/2">
-                <img
-                  src={
-                    client.image
-                      ? `${API}${client.image}`
-                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          client.name
-                        )}&background=random`
-                  }
-                  alt={client.name}
-                  className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
-                />
-              </div>
-            </div>
-
-            <CardBody className="mt-14 text-center px-6 pb-6">
-              <Typography variant="h6" className="font-bold text-gray-800">
-                {client.name}
-              </Typography>
-              <Typography variant="small" color="gray" className="mb-3">
-                {client.company || "—"}
-              </Typography>
-
-              <div className="text-left space-y-1 text-sm text-gray-700">
-                <p>📧 {client.email}</p>
-                <p>📞 {client.phone}</p>
-                {client.address && <p>📍 {client.address}</p>}
-              </div>
-
-              {client.notes && (
-                <Typography
-                  variant="small"
-                  color="gray"
-                  className="italic mt-3 block"
-                >
-                  {client.notes}
-                </Typography>
-              )}
-
-              {client.tags && client.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 justify-center mt-3">
-                  {client.tags.map((tag, i) => (
-                    <Chip
-                      key={i}
-                      size="sm"
-                      variant="filled"
-                      color="blue"
-                      value={tag}
-                      className="capitalize"
+      ) : (
+        <>
+          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+            {clients.map((client) => (
+              <Card
+                key={client._id}
+                className="rounded-xl overflow-hidden shadow-lg transform hover:scale-[1.02] transition-all duration-300"
+              >
+                {/* Gradient Header */}
+                <div className="relative h-28 bg-gradient-to-r from-blue-gray-800 via-blue-gray-900 to-black">
+                  <div className="absolute left-1/2 -bottom-12 transform -translate-x-1/2">
+                    <img
+                      src={
+                        client.image
+                          ? `${API}${client.image}`
+                          : `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              client.name
+                            )}&background=random`
+                      }
+                      alt={client.name}
+                      className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
+                      onError={(e) => {
+                        console.error(`Failed to load image: ${API}${client.image}`);
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name || "Unknown")}&background=random`;
+                      }}
                     />
-                  ))}
+                  </div>
                 </div>
-              )}
 
-              <div className="flex gap-3 mt-6 justify-center">
-                <Tooltip content="Edit">
-                  <IconButton
-                    variant="outlined"
-                    color="blue"
-                    onClick={() => handleEdit(client)}
-                  >
-                    <PencilIcon className="h-5 w-5" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip content="Delete">
-                  <IconButton
-                    variant="outlined"
-                    color="red"
-                    onClick={() => handleDelete(client._id)}
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-      </>
-        
+                <CardBody className="mt-14 text-center px-6 pb-6">
+                  <Typography variant="h6" className="font-bold text-gray-800">
+                    {client.name}
+                  </Typography>
+                  <Typography variant="small" color="gray" className="mb-3">
+                    {client.company || "—"}
+                  </Typography>
+
+                  <div className="text-left space-y-1 text-sm text-gray-700">
+                    <p>📧 {client.email}</p>
+                    <p>📞 {client.phone}</p>
+                    {client.address && <p>📍 {client.address}</p>}
+                  </div>
+
+                  {client.notes && (
+                    <Typography
+                      variant="small"
+                      color="gray"
+                      className="italic mt-3 block"
+                    >
+                      {client.notes}
+                    </Typography>
+                  )}
+
+                  {client.tags && client.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 justify-center mt-3">
+                      {client.tags.map((tag, i) => (
+                        <Chip
+                          key={i}
+                          size="sm"
+                          variant="filled"
+                          color="blue"
+                          value={tag}
+                          className="capitalize"
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 mt-6 justify-center">
+                    <Tooltip content="Edit">
+                      <IconButton
+                        variant="outlined"
+                        color="blue"
+                        onClick={() => handleEdit(client)}
+                      >
+                        <PencilIcon className="h-5 w-5" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip content="Delete">
+                      <IconButton
+                        variant="outlined"
+                        color="red"
+                        onClick={() => handleDelete(client._id)}
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+        </>
       )}
-     
 
       {/* Add/Edit Client Dialog */}
       <Dialog open={open} handler={handleOpen} size="lg" className="bg-white">
@@ -275,6 +279,10 @@ export function Clients() {
                   src={preview}
                   alt="Preview"
                   className="mt-3 w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
+                  onError={(e) => {
+                    console.error(`Failed to load preview image: ${preview}`);
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name || "Unknown")}&background=random`;
+                  }}
                 />
               )}
             </div>

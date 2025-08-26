@@ -1,6 +1,7 @@
 const Invoice = require('../models/invoice.model');
 const Client = require('../models/clientModel');
 const Subscription = require('../models/subscriptionModel');
+const EmailLog = require('../models/email.model'); // Added EmailLog import
 const { jsPDF } = require('jspdf');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
@@ -104,7 +105,34 @@ const sendInvoiceEmail = async (invoice, client, subscription) => {
         ],
     };
 
-    await transporter.sendMail(mailOptions);
+    try {
+        await transporter.sendMail(mailOptions);
+        // Log successful email
+        await EmailLog.create({
+            recipient: client.email,
+            subject: mailOptions.subject,
+            content: mailOptions.html,
+            attachment: `Invoice_${invoice.invoiceId}.pdf`,
+            type: 'invoice', // Use 'invoice' type for invoice emails
+            status: 'sent',
+            invoiceId: invoice._id,
+            sentAt: new Date(),
+        });
+    } catch (err) {
+        console.error(`Failed to send email for invoice ${invoice.invoiceId}: ${err.message}`);
+        // Log failed email
+        await EmailLog.create({
+            recipient: client.email,
+            subject: mailOptions.subject,
+            content: mailOptions.html,
+            attachment: `Invoice_${invoice.invoiceId}.pdf`,
+            type: 'invoice',
+            status: 'failed',
+            invoiceId: invoice._id,
+            sentAt: new Date(),
+        });
+        throw err; // Re-throw to maintain existing error handling
+    }
 };
 
 const generateInvoiceId = async () => {

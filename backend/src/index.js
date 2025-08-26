@@ -8,7 +8,7 @@ const fs = require('fs');
 // Routes 
 const clientRouter = require('./routes/clientRoute');
 const subscriptionRouter = require('./routes/subscriptionRoute');
-const invoiceRouter = require('./routes/invoiceRoute');
+const invoiceRouter = require('./routes/invoiceRoute');2
 const emailRouter = require('./routes/emailRoute');
 const dashboardRouter = require('./routes/dashboardRoutes');
 const adminRouter = require('./routes/adminRoute');
@@ -38,15 +38,15 @@ const uploadsPath = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsPath)) {
     fs.mkdirSync(uploadsPath, { recursive: true });
 }
-app.use('/uploads', express.static(uploadsPath));
+app.use('acountng/backend/uploads', express.static(uploadsPath));
 
 // Routes 
-app.use('/clients', clientRouter);
-app.use('/subscriptions', subscriptionRouter);
-app.use('/invoices', invoiceRouter);
-app.use('/email', emailRouter);
-app.use('/dashboard', dashboardRouter);
-app.use('/auth', adminRouter);
+app.use('/acountng/backend/clients', clientRouter);
+app.use('/acountng/backend/subscriptions', subscriptionRouter);
+app.use('/acountng/backend/invoices', invoiceRouter);
+app.use('/acountng/backend/email', emailRouter);
+app.use('/acountng/backend/dashboard', dashboardRouter);
+app.use('/acountng/backend/auth', adminRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
